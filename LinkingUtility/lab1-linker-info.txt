@@ -1,0 +1,75 @@
+Module
+- base address = 0
+- instruction count = 0
+- id = 1
+
+Module module;
+while (not eof)
+{
+  // line 1
+  // definition list
+  value_of_symbol = given_offet + module_base_address
+  store_in_table(symbol, value_of_symbol)
+
+  // line 2
+  dont care pass one
+
+  // line 3
+  get instruction count
+  count the number of instructions
+  updated base address to be based addres + instruction count
+}
+
+// PASS 2
+
+// line 1
+do nothing
+
+// line 2
+get use count
+for(1 to use count)
+{
+  read symbol
+  get value of symbol from symbol table
+  store these in a use list for when you need it in line 3
+}
+
+// line 3
+get instruction count
+for (1 to instr count)
+{
+  get address mode
+  get operand
+
+  create a Memory class (this is what I do in my code)
+  print(index of memory, address)
+}
+
+//print some other errors and warnings here
+
+
+class Tokenizer
+{
+private:
+  int linenumber;
+  int offset;
+  retVal getToken(parameters)
+
+public:
+  Tokenizer(string filename)
+  ~Tokenizer()
+
+  retVal getInt(parameters)
+  retVal getREIA(parameters)
+  retVal get Sym(parameters)
+
+}
+
+getInt() 
+{
+  retval = getToken()
+  // is that token an int?
+
+  //okay it is no errors lets return it
+  return retval
+}
