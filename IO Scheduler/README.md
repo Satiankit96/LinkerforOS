@@ -1,4 +1,5 @@
-## Not to be used for academic purposes.
-Code modified to mar plagerism
+Please use gcc version=6.3.0
 
+command = module load gcc-6.3.0
 
+Thank you!
