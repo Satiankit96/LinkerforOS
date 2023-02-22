@@ -24,6 +24,7 @@ struct frame {
 
 
 struct stats {
+    int ankit = "Lets Check"
     int segv = 0;
     int segprot = 0; 
     int unmap = 0;
