@@ -182,6 +182,143 @@ Why would you use metaclasses classes instead of functions?
 - You can hook on __new__, __init__ and __call__. Which will allow you to do different stuff. Even if usually you can do it all in __new__, some people are just more comfortable using __init__.
 -  Other reasons in the answer.
 
+**Use of metaclasses in DJango ORM:**  
+The main use case for a metaclass is creating an API. A typical example of this is the Django ORM. It allows you to define something like this:
+
+```python
+class Person(models.Model):
+    name = models.CharField(max_length=30)
+    age = models.IntegerField()
+But if you do this:
+
+person = Person(name='bob', age='35')
+print(person.age)
+```
+It won't return an IntegerField object. It will return an int, and can even take it directly from the database.
+
+This is possible because models.Model defines \_\_metaclass__ and it uses some magic that will turn the Person you just defined with simple statements into a complex hook to a database field.
+
+Django makes something complex look simple by exposing a simple API and using metaclasses, recreating code from this API to do the real job behind the scenes.
+
+------
+
+From https://www.python-course.eu/python3_metaclasses.php
+
+A metaclass is a class whose instances are classes.
+
+Uses:
+- logging and profiling
+- interface checking
+- registering classes at creation time
+- automatically adding new methods
+- automatic property creation
+- proxies
+- automatic resource locking/synchronization.
+
+### Singleton using metaclasses
+
+The singleton pattern is a design pattern that restricts the instantiation of a class to one object. It is used in cases where exactly one object is needed. The conceptcan be generalized to restrict the instantiation to a certain or fixed number of objects. The term stems from mathematics, where a singleton, - also called a unit set -, is used for sets with exactly one element.
+
+```python
+class Singleton(type):
+    _instances = {}
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
+        return cls._instances[cls]
+        
+class SingletonClass(metaclass=Singleton):
+    pass
+
+class RegularClass():
+    pass
+
+x = SingletonClass()
+y = SingletonClass()
+print(x == y) # True
+
+x = RegularClass()
+y = RegularClass()
+print(x == y) # False
+```
+### Singleton classes using inheriting
+
+```python
+class Singleton(object):
+    _instance = None
+    def __new__(cls, *args, **kwargs):
+        if not cls._instance:
+            cls._instance = object.__new__(cls, *args, **kwargs)
+        return cls._instance
+
+class SingletonClass(Singleton):
+    pass
+
+class RegularClass():
+    pass
+
+x = SingletonClass()
+y = SingletonClass()
+print(x == y) # True
 
 
+x = RegularClass()
+y = RegularClass()
+print(x == y) # False
+```
+### Profiling class methods using metaclasses
 
+Counting number of call of all the functions/methods of a class.
+
+```python
+class FuncCallCounter(type):
+    """ A Metaclass which decorates all the methods of the 
+        subclass using call_counter as the decorator
+    """
+    @staticmethod
+    def call_counter(func):
+        """ Decorator for counting the number of function 
+            or method calls to the function or method func
+        """
+        def helper(*args, **kwargs):
+            helper.calls += 1
+            return func(*args, **kwargs)
+        helper.calls = 0
+        helper.__name__= func.__name__
+    
+        return helper
+    
+    def __new__(cls, clsname, superclasses, attributedict):
+        """ Every method gets decorated with the decorator call_counter,
+            which will do the actual call counting
+        """
+        for attr in attributedict:
+            if callable(attributedict[attr]) and not attr.startswith("__"):
+                attributedict[attr] = cls.call_counter(attributedict[attr])
+        
+        return type.__new__(cls, clsname, superclasses, attributedict)
+    
+class A(metaclass=FuncCallCounter):
+    
+    def foo(self):
+        pass
+    
+    def bar(self):
+        pass
+
+if __name__ == "__main__":
+    x = A()
+    print(x.foo.calls, x.bar.calls)
+    x.foo()
+    print(x.foo.calls, x.bar.calls)
+    x.foo()
+    x.bar()
+    print(x.foo.calls, x.bar.calls)
+```
+OUTPUT:
+
+```python
+0 0
+1 0
+2 1
+`
