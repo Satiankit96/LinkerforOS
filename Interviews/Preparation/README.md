@@ -514,5 +514,149 @@ class Ryu(DefaultKick, DefaultRoll)
 However, **multiple inheritance** that is not supported in many languages due to many problems 
 associated with it.
 
+**Dynamic composition of each concrete move for creating a player** #Strategy Pattern
+https://www.geeksforgeeks.org/strategy-pattern-set-2
+
+1. Identify the family of algorithms which vary: we need multiple versions of kick, jump, etc. 
+   Define interfaces for each family and implement concrete classes. 
+```python
+interface Kick;
+
+TornadoKick implements Kick;
+FlyingKick implements Kick;
+```
+1. In the context class, add a field for storing a reference to a strategy object. Provide a setter
+   for replacing values of that field. The context should work with the strategy object only via the
+   strategy interface. The context may define an interface which lets the strategy access its data.
+```python
+from abc import ABC, abstractmethod
+class Fighter(ABC):
+    def __init__(self, kick_behavior=None):
+        self.kick_behavior = kick_behavior
+    
+    def kick(self):
+        self.kick_behavior()
+    
+    @abstractmethod
+    def display(self):
+        pass
+
+class Ryu(Fighter):
+    def display(self):
+        print(self.__class__.__name__)
+
+ryu = Ryu(jump_behavior=TornadoKick)
+ryu.kick() # executes TornadoKick
+
+# Change behavior dynamically (algorithms are interchangeable)
+ryu.kick_behavior = FlyingKick
+ryu.kick() # executes FlyingKick
+```
+TODO: Implement this in Python
+Ref: https://refactoring.guru/design-patterns/strategy
+
+## Iterator Pattern
+
+ https://www.youtube.com/watch?v=VKIzUuMdmag&list=PLF206E906175C7E07&index=18&t=0s
+
+## Builder Pattern
+
+Suppose we want to create two types of objects: **AppleIPhone** and **SamsungNote**. Both of these phones accept a large number of properties like cpu, ram, screen_size, battery, price, etc. We can create these phones in three different ways:
+
+1. Use a long constructor:
+
+   ```4python
+   def AppleIphone:
+     def __init__(cpu, ram, screen_size, battery, price):
+       <SNIP>
+   
+   def SamsungNote:
+     def __init__(cpu, ram, screen_size, battery, price):
+       <SNIP>
+   
+   # Instantiation in client code
+   my_iphone = AppleIPhone("qualcomm", "4GB", "5inch", "4000mMaH", "INR10K")
+   ```
+
+   Con:
+
+   - **Possibility of switching arguments of same type**: This becomes clumsy in languages like Java and C++ which don't support passing keyword arguments to the constructor as the order is not apparent in such cases.
+
+   - **Need to pass ALL parameters**:  In languages like C++/Java which don't have keyword arguments: We need to pass all the parameters. **Build Pattern is used to simulate keyword arguments in Java**. 
+
+     From https://stackoverflow.com/a/1988035/6463555:
+
+     >   The best Java idiom I've seem for simulating keyword arguments in constructors is the Builder pattern, described in [Effective Java 2nd Edition](http://java.sun.com/docs/books/effective/).
+>
+     >   The basic idea is to have a Builder class that has setters (but usually not getters) for the different constructor parameters. There's also a `build()` method. The Builder class is often a (static) nested class of the class that it's used to build. The outer class's constructor is often private.
+>
+     >   The end result looks something like:
+>
+     >   ```java
+     >   public class Foo {
+     >     public static class Builder {
+     >       public Foo build() {
+     >         return new Foo(this);
+     >       }
+     >   
+     >       public Builder setSize(int size) {
+     >         this.size = size;
+     >         return this;
+     >       }
+     >   
+     >       public Builder setColor(Color color) {
+     >         this.color = color;
+     >         return this;
+     >       }
+     >   
+     >       public Builder setName(String name) {
+     >         this.name = name;
+     >         return this;
+     >       }
+     >   
+     >       // you can set defaults for these here
+     >       private int size;
+     >       private Color color;
+     >       private String name;
+     >     }
+     >   
+     >     public static Builder builder() {
+     >         return new Builder();
+     >     }
+     >   
+     >     private Foo(Builder builder) {
+     >       size = builder.size;
+     >       color = builder.color;
+     >       name = builder.name;
+     >     }
+     >   
+     >     private final int size;
+     >     private final Color color;
+     >     private final String name;
+     >   
+     >     // The rest of Foo goes here...
+     >   }
+     >   ```
+>
+     >   To create an instance of Foo you then write something like:
+>
+     >   ```java
+     >   Foo foo = Foo.builder()
+     >       .setColor(red)
+     >       .setName("Fred")
+     >       .setSize(42)
+     >       .build();
+     >   ```
+>
+     >   The main caveats are:
+>
+     >   1. Setting up the pattern is pretty verbose (as you can see). Probably not worth it except for classes you plan on instantiating in many places.
+     >   2. There's no compile-time checking that all of the parameters have been specified exactly once. You can add runtime checks, or you can use this only for optional parameters and make required parameters normal parameters to either Foo or the Builder's constructor. (People generally don't worry about the case where the same parameter is being set multiple times.)
+>
+     >   You may also want to check out [this blog post](http://rwhansen.blogspot.com/2007/07/theres-builder-pattern-that-joshua.html) (not by me).
+
+   - The object phone can't be used unless **all** of its parts are instantiated. I.e., we can't use it unless we pass its `price`. 
+
+
 
 
