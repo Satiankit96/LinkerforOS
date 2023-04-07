@@ -321,4 +321,91 @@ OUTPUT:
 0 0
 1 0
 2 1
-`
+```
+
+## Abstract Classes
+
+From https://www.python-course.eu/python3_abstract_classes.php:
+
+>   Abstract classes are classes that contain one or more abstract methods. An abstract method is a 
+>   method that is declared, but contains no implementation. Abstract classes cannot be instantiated, 
+>   and require subclasses to provide implementations for the abstract methods.
+
+>   A class that is derived from an abstract class cannot be instantiated unless all of its abstract methods are overridden.
+
+A class which inherits from an abstract class and implements all the abstractmethods is called a 
+**concrete class**.
+
+From https://stackoverflow.com/a/18030001/6463555:
+> If a subclass of an abstract class overrides, i.e. provides an implementation of every abstract method in its superclass, the subclass is called a concrete class and objects of the subclass can be created
+> If a subclass of an abstract class does not override (implement) all of the abstract methods it inherits, that subclass itself is also abstract and must be declared as such
+
+```python
+from abc import ABC, abstractmethod
+ 
+class AbstractClassExample(ABC):
+ 
+    def __init__(self, value):
+        self.value = value
+        super().__init__()
+    
+    @abstractmethod
+    def do_something(self):
+        pass
+        
+class DoAdd42(AbstractClassExample):
+
+    def do_something(self):
+        return self.value + 42
+    
+class DoMul42(AbstractClassExample):
+   
+    def do_something(self):
+        return self.value * 42
+    
+x = DoAdd42(10)
+y = DoMul42(10)
+
+print(x.do_something())
+print(y.do_something())
+```
+```python
+52
+420
+```
+
+## Interfaces in Python
+
+Checkout **Interfaces in Other Languages** section in  https://realpython.com/python-interface.
+
+- Python uses abstract base classes to implement interfaces.
+- C++ uses **virtual** keyword before class methods to define abstract base classes.
+- Java has **interface** keywork to define interfaces. **Concrete classes** use **implements** keyword to implement the interfaces.
+
+## Factory Pattern
+
+- https://medium.com/@hardikpatel_6314/design-patterns-in-python-factory-c728b88603eb
+- From https://refactoring.guru/design-patterns/factory-method
+- https://www.geeksforgeeks.org/design-patterns-set-2-factory-method/?ref=lbp
+
+## Abstract Factory Pattern
+
+-
+https://www.geeksforgeeks.org/abstract-factory-pattern/  
+https://refactoring.guru/design-patterns/abstract-factory
+
+### Factory vs Abstract factory
+
+- https://dzone.com/articles/factory-method-vs-abstract
+
+- When we need another layer of abstraction.
+
+### E.G. 1: abstract_factory.py
+
+From https://refactoring.guru/design-patterns/abstract-factory:
+
+> Imagine that you’re creating a furniture shop simulator. Your code consists of classes that represent:
+> - A family of related products, say: Chair + Sofa + CoffeeTable.
+> - Several variants of this family. For example, products Chair + Sofa + CoffeeTable are available in these variants: Modern, Victorian, ArtDeco.
+
+
