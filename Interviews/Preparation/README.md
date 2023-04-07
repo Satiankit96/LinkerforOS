@@ -883,4 +883,140 @@ Chain of Responsibility is a behavioral pattern in which upon receiving a reques
 
 Applications:
 
+-   We can setup  **logging handlers for different levels**.
+
+    ```python
+    DebugHandler -> InfoHandler -> WarningHandler ErrorHandler -> CriticalHandler
+    ```
+
+-   **Different types** of logging handlers (python example in https://en.wikipedia.org/wiki/Chain-of-responsibility_pattern).
+
+    ```python
+    ConsoleLogger -> FileLogger -> EmailLogger
+    ```
+
+-   An XML parser might work in this manner.
+
+-   GUI applications are implement using this principle. when a user clicks a button, the event propagates through the chain of GUI elements that starts with the button, goes along its containers (like forms or panels), and ends up with the main application window. The event is processed by the first element in the chain that’s capable of handling it. This example is also noteworthy because it shows that a chain can always be extracted from an object tree.
+
+    ![](./implementations/solution2-en-2x.png)
+
+-   In this example, the **Chain of Responsibility** pattern is responsible for displaying contextual help information for active GUI elements.
+
+
+    The application’s GUI is usually structured as an object tree. For example, the `Dialog` class, which renders the main window of the app, would be the root of the object tree. The dialog contains `Panels`, which might contain other panels or simple low-level elements like `Buttons` and `TextFields`.A simple component can show brief contextual tooltips, as long as the component has some help text assigned. But more complex components define their own way of showing contextual help, such as showing an excerpt from the manual or opening a page in a browser.
+    
+    ![Structure of the Chain of Responsibility example](https://refactoring.guru/images/patterns/diagrams/chain-of-responsibility/example2-en.png)
+    
+    That’s how a help request traverses GUI objects.
+    
+    When a user points the mouse cursor at an element and presses the `F1` key, the application detects the component under the pointer and sends it a help request. The request bubbles up through all the element’s containers until it reaches the element that’s capable of displaying the help information.
+
+From https://en.wikipedia.org/wiki/Chain-of-responsibility_pattern:
+
+**Chain of Responsibility vs Decorator pattern**
+
+>   The chain-of-responsibility pattern is structurally nearly identical to the [decorator pattern](https://en.wikipedia.org/wiki/Decorator_pattern), the difference being that for the decorator, all classes handle the request, while for the chain of responsibility, exactly one of the classes in the chain handles the request. This is a strict definition of the Responsibility concept in the [GoF](https://en.wikipedia.org/wiki/Design_Patterns) book. However, many implementations (such as loggers below, or UI event handling, or servlet filters in Java, etc) allow several elements in the chain to take responsibility.
+>
+>   This pattern promotes the idea of [loose coupling](https://en.wikipedia.org/wiki/Loose_coupling).
+
+
+
+## Visitor Pattern
+
+Revisit
+
+
+
+## Interpreter Pattern
+
+Read:
+
+https://medium.com/@sawomirkowalski/design-patterns-interpreter-5b4c0e2b832f
+
+https://www.geeksforgeeks.org/interpreter-design-pattern/
+
+https://sourcemaking.com/design_patterns/interpreter
+
+https://en.wikipedia.org/wiki/Interpreter_pattern
+
+Real life examples:
+
+-   Roman number interpreter - see the medium article above
+-   Sql
+-   Python
+
+#### Virtual destructor in C++
+
+From https://www.geeksforgeeks.org/virtual-destructor/:
+
+>   Deleting a derived class object using a pointer to a base class that has a non-virtual destructor results in undefined behavior. To correct this situation, the base class should be defined with a virtual destructor. 
+>   ...
+>   any time you have a virtual function in a class, you should immediately add a virtual destructor (even if it does nothing).
+
+# Bridge Pattern
+
+From https://en.wikipedia.org/wiki/Bridge_pattern:
+<u>Official definition</u>:
+Decouple an abstraction from its implementation so that the two can vary independently.
+
+See the class diagram from the *Structure section*:
+![](https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Bridge_UML_class_diagram.svg/500px-Bridge_UML_class_diagram.svg.png)
+
+Also see the Java example which defines a bankaccount that separates the account operations from the logging of these operations.
+
+***Personal impression***: We have two **Interfaces**+**Concrete Classes**. One of these conrete classes is composed into the other one's **Interface**. E.g., in the Java example in wiki, the logger concrete class is **<u>composed</u>** in the Interface of the bank account i.e., one interface holds a reference to a concrete implementation.
+
+From Derek Banas (https://www.youtube.com/watch?v=9jIgSsIfh_8):
+<u>Definition</u>: Progressivly adding functionality while separating out major differences using abstract classes.
+
+**<u>Problem</u>**:
+Suppose we want to create 2 types of remotes - one for TV and one for DVD. The buttons will have the following behavior based on device:
+
+![image-20200621015058017](/Users/saim/github/coding/design/bridge_pattern_remote.png)
+
+| Remote Button | TV           | DVD              |
+| :-----------: | ------------ | ---------------- |
+|       7       | Vol Up       | Vol Up           |
+|       8       | Vol Down     | Vol Down         |
+|       5       | Channel Up   | Next Chapter     |
+|       6       | Channel Down | Previous Chapter |
+|       9       | Mute         | Pause            |
+
+From the solution at https://www.newthinktank.com/2012/10/bridge-design-pattern-tutorial/:
+
+```java
+// Implementor
+// With the Bridge Design Pattern you create 2 layers of abstraction
+// In this example I'll have an abstract class representing
+// different types of devices. I also have an abstract class
+// that will represent different types of remote controls
+
+// This allows me to use an infinite variety of devices and remotes
+```
+
+Interesting thought: [**not implementing all of the methods of interface. is it possible?**](https://stackoverflow.com/questions/11437097/not-implementing-all-of-the-methods-of-interface-is-it-possible) - I have improved the example which Derek demonstrates. However, DVD and TV will make few methods in the Interface to do nothing.
+
+From https://sketchboard.me/FCcCDW3VTZLQ: 
+
+![image-20200621024128865](./implementations/uml_remote_bridge_pattern.png)
+
+Client code:
+
+```python
+tv_remote = TVRemote(TVDevice())
+tv_remote.7Pressed()
+tv_remote.5Pressed()
+
+dvd_remote = DVDRemote(DVDDevice())
+dvd_remote.8Pressed()
+dvd_remote.9Pressed()
+```
+
+**<u>Final impressions</u>**:
+We have sort of bridged various operations of various `ElectronicDevice`into the `AbstractRemote` interface using composition.
+
+TODO: Implement the above pattern in the next iteration.
+
+
 
