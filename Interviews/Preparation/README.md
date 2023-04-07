@@ -657,6 +657,133 @@ Suppose we want to create two types of objects: **AppleIPhone** and **SamsungNot
 
    - The object phone can't be used unless **all** of its parts are instantiated. I.e., we can't use it unless we pass its `price`. 
 
+2. Define setter for each parameter:
+   This method creates an empty object and fills in the details later, which bypasses the constructor completely and these properties cannot be used during initialization. The client can instantiate the Phone step by step like:
+
+   ```python
+   my_iphone = AppleIPhone()
+   
+   my_iphone.set_cpu("qualcomm") # using a setter like Java/C++. We can directly set values in Python
+   my_iphone.set_ram("4GB")
+   # Use your iphone
+   ```
+
+   Pros:
+
+   - Can use the object before instantiating all of its properties
+   - Makes the setting of properties more explicit.
+
+   Cons:
+
+   - Synchronization from multiple threads is not guaranteed without using locks.
+   
+3. Unify construction of different kind of concrete classes:
+    Read https://www.geeksforgeeks.org/builder-design-pattern/ - understand the role of **Director, Builder, ConcreteBuilder**
+    Also a good read: https://refactoring.guru/design-patterns/builder
+    TODO: understand this point in more details.
+
+4.  From https://stackoverflow.com/a/22416342/6463555, this pattern seems to be used for:
+    1.  **Build objects step by step:**
+       This avoids having a constructor with a large number of parameters.
+
+       Good summary about why builder pattern improves the construction problems : https://hermannyung.com/2017/05/28/builder-pattern-vs-constructor-vs-setter/
+
+    2.  **Creating immutable objects.**
+        You've never seen that used because most of the time, the builder pattern is used to build an immutable object.
+
+        > But I don't see why they couldn't coexist. The builder builds an object, and you want the built object to be mutable, then it can have setters. But then, if it is mutable and has setters, why not build the object using a simple constructor, and call setters to change the state? The builder isn't really useful anymore, unless only one or two fields among many are mutable.
+
+5.  From the comment in https://www.youtube.com/watch?v=k4EkJgY9P4c:
+
+    > Builder Pattern vs Setters:     (My understanding from googling. Feel free to correct if you find it wrong)  There are classes without setters, called "Immutable Classes". They are used in distributed and multi-threaded programs where multiple threads can alter the states of an object. Developers use 'synchronize' to prevent this.  But a more convenient approach is to use Immutable classes so that threads can't alter the states via setters. (If states need to be altered a new object is created! This consumes memory which is a cons of Immutable Classes but its worth, compared to the state-altered-havocs)     Thus for Immutable Classes, Builder Pattern has to be used instead of setters
+
+    ## Command Pattern
+
+<u>Definition</u>:
+
+The Command pattern 
+
+-   **encapsulates** a request as an object
+
+thereby letting you
+
+-   **parametrize** other objects with different requests
+-   **queue**, or
+-   **log**
+
+requests, and support 
+
+-   **undoable operations**.
 
 
+
+My interpretation:
+
+-   Instead of invoking commands associated with an object directly, we instead create objects like partial functions in Python which encapsulate the commands. 
+-   The command objects contain the object on which the commands have to be executed.
+-   The command objects are saved in a class (called Invoker) to do fancy things like executing the commands in a batch or executing them on a remote host.
+-   The client class a method like execute on the Invoker object to start the execution of the commands.
+
+
+
+Command pattern has <u>4 components</u>:
+
+1.  **Receiver**
+    The Object that will receive and execute the command. In 
+
+2.  **Invoker**
+    Which will send the command to the receiver
+
+3.  **Command Objects**
+    Itself, which implements an **execute**, or action method, and **contains all required information** to execute it. These objects should be serializable.
+
+4.  **Client**
+    The application or component which is aware of the Receiver, Invoker and Commands
+
+    
+
+<u>Client code for a Light object and associated commands On, Off, Increase brightness, Decrease brightness.</u> (see command_light_switch.py)
+
+```python
+"""
+Client code - client know about the other 3 parts - Receiver, Commands, and Invoker
+Operations:
+	- Client instantiates the Reciever object
+	- Client instantiates the required commands by passing the Receiver object and required parameters.
+	- Client passes the instantiated command objects to an Invoker instance.
+	- Client asks the Invoker to execute the commands.
+"""
+light = Light() # Receiver
+
+# Command objects
+turn_light_on         = TurnONLight(light)
+increase_brightness   = IncreaseBrightness(light, increase=2)
+decrease_brightness   = DecreaseBrightness(light, decrease=2)
+turn_light_off        = TurnOFFLight(light)
+
+# Delegate calls to Invoker.
+switch_board = SwitchBoard() # Invoker
+switch_board.add(turn_light_on)
+switch_board.add(increase_brightness)
+switch_board.add(decrease_brightness)
+switch_board.add(decrease_brightness)
+switch_board.add(turn_light_off)
+switch_board.execute()
+```
+
+From https://www.youtube.com/watch?v=7Pj5kAhVBlg:
+
+>   -   This is a behvioural design pattern in which an object is used to represent and encapsulate all the information needed to call **a method at a later time**.
+>   -   This information includes the method name, the object that owns the method and values for the method parameters.
+
+From https://refactoring.guru/design-patterns/command, use this pattern:
+
+1.  **Parametrize objects with operations**: This means turning the command into a stand-alone object to do things like: 
+    -   pass it as a paratemer to a function
+    -   provide the ability to customize commands. For e.g., a configure menu which provides users the flexibility to attach different actions. E.g., GUI Buttons, menus.
+
+2.  To queue, schedule, parallelize or remotely execute the commands. The command objects are supposed to be serializable to achieve this.
+3.  Provide reversible operations. Command objects can be put into a stack/queue to do reversible operations.
+
+TODO: Implement [Messaging Queue using the Command Pattern](https://www.sitepoint.com/understanding-the-command-design-pattern/#:~:text=As you can see%2C the,action (i.e. a transaction).)
 
