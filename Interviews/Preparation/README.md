@@ -408,4 +408,111 @@ From https://refactoring.guru/design-patterns/abstract-factory:
 > - A family of related products, say: Chair + Sofa + CoffeeTable.
 > - Several variants of this family. For example, products Chair + Sofa + CoffeeTable are available in these variants: Modern, Victorian, ArtDeco.
 
+### E.G. 2: abstract_factory2.py - Seems to be a better design than abstract_factory.py
+
+From https://www.geeksforgeeks.org/abstract-factory-pattern/:
+
+> Let’s take an example, Suppose we want to build a global car factory. If it was factory design pattern, then it was suitable for a single location. But for this pattern, we need multiple locations and some critical design changes.
+> 
+> We need car factories in each location like IndiaCarFactory, USACarFactory and DefaultCarFactory. Now, our application should be smart enough to identify the location where it is being used, so we should be able to use appropriate car
+factory without even knowing which car factory implementation will be used internally. This also saves us from someone calling wrong factory for a particular location.
+> 
+> Here we need another layer of abstraction which will identify the location and internally use correct car factory implementation without even giving a single hint to user. This is exactly the problem, which abstract factory pattern is used to solve.
+Somewhat the above example is also based on How the Cabs like uber and ola functions on the large scale.
+
+### How to implement abstract factory 
+
+From https://refactoring.guru/design-patterns/abstract-factory:
+
+1. Map out a matrix of distinct product types versus variants of these products.
+
+1. Declare abstract product interfaces for all product types. Then make all concrete product classes implement these interfaces.
+
+1. Declare the abstract factory interface with a set of creation methods for all abstract products.
+
+1. Implement a set of concrete factory classes, one for each product variant.
+
+1. Create factory initialization code somewhere in the app. It should instantiate one of the concrete factory classes, depending on the application configuration or the current environment. Pass this factory object to all classes that construct products.
+
+1. Scan through the code and find all direct calls to product constructors. Replace them with calls to the appropriate creation method on the factory object.
+
+## Observer Pattern 
+
+**see observer.py**  
+
+From https://www.geeksforgeeks.org/observer-pattern-set-1-introduction/?ref=lbp:
+> The Observer Pattern defines a one to many dependency between objects so that one object changes state, all of its dependents are notified and updated automatically.
+
+Take care of the [**Lapsed listener problem**](https://en.wikipedia.org/wiki/Lapsed_listener_problem) by using **weak references**.
+
+**Real Life Uses:**
+
+- It is heavily used in GUI toolkits and event listener. In java the button(subject) and onClickListener(observer) are modelled with observer pattern.
+- Social media, RSS feeds, email subscription in which you have the option to follow or subscribe and you receive latest notification.
+- All users of an app on play store gets notified if there is an update.
+
+**Good read: https://refactoring.guru/design-patterns/observer**
+
+## Singleton
+
+Example use cases:
+
+- Logger
+- DB connection
+
+**Naïve** Singleton in C++: https://refactoring.guru/design-patterns/singleton/cpp/example  
+**Thread-safe** Singleton in C++: https://refactoring.guru/design-patterns/singleton/cpp/example#example-1
+
+**Thread-safe** Singleton in Python: https://refactoring.guru/design-patterns/singleton/python/example#example-1--main-py
+
+## Strategy Pattern
+
+From https://www.geeksforgeeks.org/strategy-pattern-set-1/
+
+> Suppose we are building a game “Street Fighter”. For simplicity assume that a character may have
+ four moves that is kick, punch, roll and jump. Every character has kick and punch moves, but roll
+  and jump are optional. How would you model your classes?
+
+**Inheritence: A Base class containing all moves?**  
+We can define a Base **Figher** class with default implementation of kick, punch, roll and jump
+ methods and override them in subclasses.  
+
+- Not all players need all the moves. A player not needing jump will inherit jump. It can make
+those moves *noop* but we would have to do it in **all** the sub classes. This is difficult to maintain. 
+- All the player classes will need to override the methods for special moves.
+
+**Interface for each move - {Kick,Punch,Jump,Roll}Interface?**  
+
+- Each player can implement the interface for whatever move they require. E.g.,
+    ```java
+    interface Kick;
+    interface Punch;
+    interface Jump;
+    interface Roll;
+    
+    class Chunli implements Kick, Punch, Jump, Roll; // Note: We can implement multiple interfaces in Java
+    ```
+
+- The main issue here is **code** reuse. Since there is no default implementation, each player
+  who wants a move, say **JumpBehavior**, will need to repeat the code.
+
+**Default Base class for each move?**  
+
+We can have a default Base class instead of interfaces for each move. Each concrete class can
+  then inherit the required classes.
+
+```java
+class DefaultKick;
+class DefaultPunch;
+class DefaultJump;
+class DefaultRoll;
+
+class Ryu(DefaultKick, DefaultPunch, DefaultJump)
+class Ryu(DefaultKick, DefaultRoll)
+```
+
+However, **multiple inheritance** that is not supported in many languages due to many problems 
+associated with it.
+
+
 
