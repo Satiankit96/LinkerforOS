@@ -787,3 +787,100 @@ From https://refactoring.guru/design-patterns/command, use this pattern:
 
 TODO: Implement [Messaging Queue using the Command Pattern](https://www.sitepoint.com/understanding-the-command-design-pattern/#:~:text=As you can see%2C the,action (i.e. a transaction).)
 
+
+
+## Flyweight Pattern
+
+Definition from https://en.wikipedia.org/wiki/Flyweight_pattern:
+
+>   A flyweight is an [object](https://en.wikipedia.org/wiki/Object_(computer_science)) that minimizes [memory](https://en.wikipedia.org/wiki/Computer_memory) usage by sharing as much data as possible with other similar objects; it is a way to use objects in large numbers when a simple repeated representation would use an unacceptable amount of memory. Often some parts of the object state can be shared, and it is common practice to hold them in external [data structures](https://en.wikipedia.org/wiki/Data_structure) and pass them to the objects temporarily when they are used.
+
+ This pattern is based on the concept of reusability. Heavy weight objects should be shared as much as possible. This is similar to the string objects in Python (interning).
+
+From https://refactoring.guru/design-patterns/flyweight:
+
+Read the game example. Imp points:
+
+-   Flyweight objects are **immutable**
+
+-   Intrictic state is the state which resides within a flyweight object and isn't changed; extrinsic state are the variables related to the object which can change. E.g., the sprite used to represent the bullet is an intrinsic state but the position of the bullet in the game is an extrinsic state.
+
+    >   This constant data of an object is usually called the *intrinsic state*. It lives within the object; other objects can only read it, not change it. The rest of the object’s state, often altered “from the outside” by other objects, is called the *extrinsic state*.
+    >
+    >   The Flyweight pattern suggests that you stop storing the extrinsic state inside the object. Instead, you should pass this state to specific methods which rely on it. Only the intrinsic state stays within the object, letting you reuse it in different contexts. As a result, you’d need fewer of these objects since they only differ in the intrinsic state, which has much fewer variations than the extrinsic.
+
+    >   A more elegant solution is to create a separate context class that would store the extrinsic state along with reference to the flyweight object.
+
+-   Use a **Flyweight factory** to return already created objects using some key.
+
+    >   For more convenient access to various flyweights, you can create a factory method that manages a pool of existing flyweight objects. The method accepts the intrinsic state of the desired flyweight from a client, looks for an existing flyweight object matching this state, and returns it if it was found. If not, it creates a new flyweight and adds it to the pool.
+>
+    >   There are several options where this method could be placed. The most obvious place is a flyweight container. Alternatively, you could create a new factory class. Or you could make the factory method static and put it inside an actual flyweight class.
+
+## Facade Pattern
+
+<u>Definition</u> from wikipedia:
+
+>   a facade is an [object](https://en.wikipedia.org/wiki/Object_(computer_science)) that serves as a front-facing interface masking more complex underlying or structural code. 
+
+From the comment in https://www.youtube.com/watch?v=K4FkHVO5iac (seems more useful than watching the video.)
+
+>   Facade seems to be even simpler in my view. All those classes having complex relations is pretty irrelevant to the Facade pattern. The only thing important is that those classes are multiple and the client has to deal with all of them. So the Facade class combines interfaces of all needed classes into one interface. I.e. Client calls Facade.StartEngine, Facade.StopEngine, Facade.TurnLeft, Facade.TurnRight, and Facade class calls Engine.Start, Engine.Stop, Wheel.Left, Wheel.Right. It's useful for example in WCF services, when you have to expose many controllers' methods to an external client.
+
+Good read: https://refactoring.guru/design-patterns/facade
+
+An okay'ish eg of Facade in Python: https://github.com/Sean-Bradley/Design-Patterns-In-Python/blob/master/facade/shop_facade.py
+
+# CRTP - Curiously recurring template pattern
+
+From https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern:
+
+-   Its an idiom in C++
+-   Achives **compile time polymorphism** using template instantiation. Lookups from the virtual table during runtime polymorphism are slower compared to this technique.
+-   You can read the wiki page to know its applications and shortcomings.
+
+## Proxy Pattern
+
+From https://en.wikipedia.org/wiki/Proxy_pattern:
+
+>   A *proxy*, in its most general form, is a class functioning as an interface to something else. The proxy could interface to anything: a network connection, a large object in memory, a file, or some other resource that is expensive or impossible to duplicate. In short, a proxy is a wrapper or agent object that is being called by the client to access the real serving object behind the scenes. Use of the proxy can simply be [forwarding](https://en.wikipedia.org/wiki/Forwarding_(object-oriented_programming)) to the real object, or can provide additional logic. In the proxy, extra functionality can be provided, for example caching when operations on the real object are resource intensive, or checking preconditions before operations on the real object are invoked. **For the client, usage of a proxy object is similar to using the real object, because both implement the same interface.**
+
+
+
+Used to control access to an object. Types from the HF book:
+
+1.  **Remote**: access remote server; acess a diff namespace
+2.  **Virtual**: controls access to a resource which is expensive to create; like **cache** or **lazy evaluation**.
+3.  **Protection**: access management - **authentication**.
+
+#### Decorator vs Proxy:
+
+Decorator is more generic and supports chaining. Proxy doesn't do that. It just adds some additional behavior before the actual call is made.
+
+## Composite Pattern
+
+From https://en.wikipedia.org/wiki/Composite_pattern:
+
+>   The composite pattern describes a group of objects that are treated the same way as a single instance of the same type of object. The intent of a composite is to "compose" objects into tree structures to represent part-whole hierarchies. Implementing the composite pattern lets clients treat individual objects and compositions uniformly.
+
+Se https://en.wikipedia.org/wiki/Composite_pattern#/media/File:Composite_UML_class_diagram_(fixed).svg
+
+From https://www.youtube.com/watch?v=EWDmWbJ4wRA (watch complete later...):
+
+-   Sometime we want to treat individual objects and a composition of objects same from user's POV.
+-   We make the **individual objects** (leaf) and the **composite of objects** implement the **same interface**. 
+
+## Chain of Responsibility (CoR)
+
+From https://refactoring.guru/design-patterns/chain-of-responsibility
+
+<u>Definition</u>:
+Chain of Responsibility is a behavioral pattern in which upon receiving a request the handler decides whether to process or pass the request to the next handler.
+
+<u>Important points</u>:
+
+>   The pattern suggests that you link these handlers into a chain. Each linked handler has a field for **storing a reference to the next handler** in the chain. In addition to processing a request, handlers pass the request further along the chain. The request travels along the chain until all handlers have had a chance to process it.
+
+Applications:
+
+
