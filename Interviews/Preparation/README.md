@@ -84,6 +84,104 @@ Most of these design patterns are specifically concerned with communication betw
 -   [ ] [Visitor](https://en.wikipedia.org/wiki/Visitor_pattern) separates an algorithm from an object structure by moving the hierarchy of methods into one object.
 ------
 
+## Mixins vs Abstract Classes vs Interfaces
+
+From https://stackoverflow.com/a/59752820/6463555:
+
+  1. Abstract Class
+
+     - Class that needs to contain one or more abstract methods
+
+     - Abstract Class can contain state (instance variables) and non-abstract methods
+
+  2. Interface
+
+     - Interface contains abstract methods only (no non-abstract methods and no internal state)
+  3. MixIns
+
+     - MixIns (like Interfaces) do not contain internal state (instance variables)  
+     - MixIns contain one or more non-abstract methods (they can contain non-abstract methods unlike interfaces)  
+     - In e.g. Python these are just conventions, because all of the above are defined as classes. However, the common feature of both Abstract Classes, Interfaces and MixIns is that they should not exist on their own, i.e. should not be instantiated.
+
+## Mixins in Python
+
+Basically read **https://stackoverflow.com/questions/533631/what-is-a-mixin-and-why-are-they-useful**.  
+
+Mixins in Python are similar to **Curiously Recurring Template Pattern (CRTP)** in C++.
+
+From https://stackoverflow.com/a/17491186/6463555: 
+
+> My understanding of the conventions that govern something you would call a Mixin are that a Mixin:
+>
+> - adds methods but not instance variables (class constants are OK)
+> - only inherits from object (in Python)
+
+**From https://stackoverflow.com/a/36222493/6463555:**
+
+> In the context of Python especially, a mixin is a parent class that provides functionality to 
+> subclasses but is not intended to be instantiated itself.
+
+**Example of Multiple Inheritance**
+
+This example, from the documentation, is an OrderedCounter:
+
+```
+class OrderedCounter(Counter, OrderedDict):
+     'Counter that remembers the order elements are first encountered'
+
+     def __repr__(self):
+         return '%s(%r)' % (self.__class__.__name__, OrderedDict(self))
+
+     def __reduce__(self):
+         return self.__class__, (OrderedDict(self),)
+```
+
+> It subclasses both the Counter and the OrderedDict from the collections module.
+
+> Both Counter and OrderedDict are intended to be instantiated and used on their own. However, by subclassing them both, we can have a counter that is ordered and reuses the code in each object.
+
+> This is a powerful way to reuse code, but it can also be problematic. If it turns out there's a bug in one of the objects, fixing it without care could create a bug in the subclass.
+
+**Example of a Mixin**  
+
+> Unlike the example above, a mixin is not intended to be used on its own. It provides new or different functionality.
+>
+> For example, the standard library has a couple of mixins in the socketserver library.
+>
+> Forking and threading versions of each type of server can be created using these mix-in classes. For instance, ThreadingUDPServer is created as follows:
+
+```python
+class ThreadingUDPServer(ThreadingMixIn, UDPServer):
+    pass
+```
+
+> The mix-in class comes first, since it overrides a method defined in UDPServer. Setting the various attributes also changes the behavior of the underlying server mechanism.
+>
+> In this case, the mixin methods override the methods in the UDPServer object definition to allow for concurrency.
+
+## Metaclasses
+
+Must read: https://stackoverflow.com/a/6581949/6463555  
+
+> `type` is the metaclass Python uses to create all classes behind the scenes.
+
+> You can call it a 'class factory' if you wish.
+
+> The main purpose of a metaclass is to change the class automatically, when it's created.
+> 
+> You usually do this for APIs, where you want to create classes matching the current context.
+>   
+> Imagine a stupid example, where you decide that all classes in your module should have their attributes written in uppercase. There are several ways to do this, but one way is to set __metaclass__ at the module level.
+>   
+> This way, all classes of this module will be created using this metaclass, and we just have to tell the metaclass to turn all attributes to uppercase.  
+>
+> you can have metaclasses, inheriting from metaclasses
+
+Why would you use metaclasses classes instead of functions?
+-  Subclasses of a class will be instances of its metaclass if you specified a metaclass-class, but not with a metaclass-function.
+- You can hook on __new__, __init__ and __call__. Which will allow you to do different stuff. Even if usually you can do it all in __new__, some people are just more comfortable using __init__.
+-  Other reasons in the answer.
+
 
 
 
